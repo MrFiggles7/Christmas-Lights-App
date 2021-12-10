@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h> 
 #include <Adafruit_NeoPixel.h>
-#include <WiFiManager.h>
 #include <FirebaseESP8266.h>
 #include <FirebaseESP8266HTTPClient.h>
 #include <FirebaseFS.h>
