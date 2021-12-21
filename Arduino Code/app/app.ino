@@ -1,31 +1,37 @@
 #include <ESP8266WiFi.h> 
 #include <Adafruit_NeoPixel.h>
-#include <FirebaseESP8266.h>
-#include <FirebaseESP8266HTTPClient.h>
-#include <FirebaseFS.h>
-#include <FirebaseJson.h>
+#include <Firebase_ESP_Client.h>
 
-#define PIXEL_COUNT 13
+#define PIXEL_COUNT 200
 #define PIXEL_PIN D6
 const char* ssid     = "Metropolis";
 const char* password = "cryptkeeper4us";
-extern long long r = 0;
-extern long long g = 0;
-extern long long b = 0;
+#define FIREBASE_HOST "christmas-lights-19083-default-rtdb.firebaseio.com/"
+#define FIREBASE_AUTH "RF26mOPXlLTwMqBLtKSKvthlwOK6fpz2oxb2yZHD" // secret (40 chars)
+#define USER_EMAIL "fingersmagoo+christmas@gmail.com"
+#define USER_PASSWORD "ou812ic"
+#define API_KEY "AIzaSyCtoGVfq7bo0kQT700uW7mV_RK4upg-A44"
+#define FIREBASE_PROJECT_ID "christmas-lights-19083"
 
-#define FIREBASE_HOST "glownameplate-default-rtdb.firebaseio.com/" //change this to not my nameplate stuff :)
-#define FIREBASE_AUTH "G1KSHjZ8Y3rxaoau8wpIrs1Xv8WS4RhBqO0dopmW" // secret (40 chars)
+#define DELAYVAL 10000
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, NEO_GRB + NEO_KHZ800); //Riley, this might need to be NEO_RGB, not sure yet
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, NEO_RGB + NEO_KHZ800);
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("Starting Sketch...");
-  pinMode(PIXEL_PIN, OUTPUT);
-  setupWiFi(); 
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  Firebase.reconnectWiFi(true); 
+  setupWiFi();
+  config.api_key = API_KEY;
+  config.database_url = FIREBASE_HOST;
+  auth.user.email = USER_EMAIL;
+  auth.user.password = USER_PASSWORD;  
+  Firebase.begin(&config, &auth);
+  Firebase.reconnectWiFi(true);
+  strip.begin();
 }
 
 void setupWiFi () {
@@ -49,5 +55,28 @@ void setupWiFi () {
 
 void loop()
 {
-	
+  readFirebaseData();
+  
+  strip.clear();
+  strip.setBrightness(255);
+  //strip.setPixelColor(0, strip.Color(255, 255, 255));
+  //strip.setPixelColor(1, strip.Color(255, 0, 0));
+  for(int i=0; i<PIXEL_COUNT; i++) { // For each pixel...
+    strip.setPixelColor(i, strip.Color(0, 150, 0));
+
+    strip.show();   // Send the updated pixel colors to the hardware.
+
+    delay(DELAYVAL); // Pause before next pass through loop
+  }
+  //setPixel(0, 255,0,0);
+  //setPixel(1, 0,255,0);
+  //setPixel(2, 0,0,255);
+  ////strip.setPixelColor(2, strip.Color(0, 255, 0));
+  //strip.setPixelColor(3, strip.Color(0, 0, 255));
+  //strip.setPixelColor(4, strip.Color(255, 0, 255));
+  //strip.setPixelColor(5, strip.Color(255, 255, 0));
+  //strip.setPixelColor(6, strip.Color(0, 255, 255));
+  //strip.setPixelColor(7, strip.Color(0, 255, 255));
+  //strip.setPixelColor(8, strip.Color(255, 0, 255));
+  //strip.show();
 }
