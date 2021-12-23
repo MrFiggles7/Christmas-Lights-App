@@ -1,35 +1,55 @@
 
-
 void readFirebaseData() {
+  unsigned long fireBaseCurrentMillis = millis();
+  if (fireBaseCurrentMillis - fireBasePreviousMillis >= fireBaseInterval) {
+    fireBasePreviousMillis = fireBaseCurrentMillis;
+    GetDocument();   
+  }
+}
 
-    Serial.println("Reading...");
-    String documentPath = "animations/" + String(currentDocument);
-    String mask = "";
-    Serial.print("Get a document... ");
-
-    if (Firebase.RTDB.getJSON(&fbdo, documentPath.c_str())) {
-        Serial.printf("ok\n%s\n\n", fbdo.payload().c_str());
+void GetDocument() {
+  String documentPath = "animations/" + String(currentDocument);
+  String mask = "";
+  int brightness = 0;
+  
+  if (Firebase.RTDB.getJSON(&fbdo, documentPath.c_str())) {
+      String temp(fbdo.payload().c_str());
+      if (temp == "null") {
+        currentDocument = 0;
+        GetDocument();
+      } else {        
         FirebaseJson payload;
-        payload.setJsonData(fbdo.payload().c_str());
-
-        size_t len = payload.iteratorBegin();
-        String key, value = "";
-        int type = 0;
-        for (size_t i = 0; i < len; i++)
+        FirebaseJsonData result;        
+        payload.setJsonData(temp);        
+        payload.get(result, "brightness");
+        if (result.success)
         {
-          payload.iteratorGet(i, type, key, value);
-          if (key == "brightness") {
-            brightness = value.toInt();
-          } else if(key == "frames") {
-            
-          }
-          
-          Serial.println(key);
-          Serial.println(value);
-        }
-    }
-    else {
-      currentDocument = 0;
-      Serial.println(fbdo.errorReason());
-    }  
+          brightness = result.to<int>();
+        }    
+        payload.get(result, "frames");
+        FirebaseJsonArray frames;
+        result.get<FirebaseJsonArray>(frames);
+        frames.get(result, 0); // Only doing this because we are not animating yet.
+        String scene = result.to<String>();
+        setScene(brightness, scene);
+        currentDocument++;
+      }
+      /*
+      for (size_t i = 0; i < frames.size(); i++)
+      {
+        frames.get(result, i);        
+        //Print its value
+        Serial.print("Array index: ");
+        Serial.print(i);
+        Serial.print(", type: ");
+        Serial.print(result.type);
+        Serial.print(", value: ");
+        Serial.println(result.to<String>());
+      }
+      */
+  }
+  else {
+    currentDocument = 0;
+    Serial.println(fbdo.errorReason());
+  }
 }

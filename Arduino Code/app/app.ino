@@ -56,27 +56,4 @@ void setupWiFi () {
 void loop()
 {
   readFirebaseData();
-  
-  strip.clear();
-  strip.setBrightness(255);
-  //strip.setPixelColor(0, strip.Color(255, 255, 255));
-  //strip.setPixelColor(1, strip.Color(255, 0, 0));
-  for(int i=0; i<PIXEL_COUNT; i++) { // For each pixel...
-    strip.setPixelColor(i, strip.Color(0, 150, 0));
-
-    strip.show();   // Send the updated pixel colors to the hardware.
-
-    delay(DELAYVAL); // Pause before next pass through loop
-  }
-  //setPixel(0, 255,0,0);
-  //setPixel(1, 0,255,0);
-  //setPixel(2, 0,0,255);
-  ////strip.setPixelColor(2, strip.Color(0, 255, 0));
-  //strip.setPixelColor(3, strip.Color(0, 0, 255));
-  //strip.setPixelColor(4, strip.Color(255, 0, 255));
-  //strip.setPixelColor(5, strip.Color(255, 255, 0));
-  //strip.setPixelColor(6, strip.Color(0, 255, 255));
-  //strip.setPixelColor(7, strip.Color(0, 255, 255));
-  //strip.setPixelColor(8, strip.Color(255, 0, 255));
-  //strip.show();
 }
