@@ -5,9 +5,9 @@ void setAll(byte red, byte green, byte blue) {
   strip.show();
 }
 
-void setScene(int brightness, String scene) {
+void setScene(String scene) {  
   strip.clear();
-  strip.setBrightness(brightness);
+  
   int ledNumber = 0;
   while(scene.indexOf('|') > 0){
     String led = scene.substring(0, scene.indexOf('|'));

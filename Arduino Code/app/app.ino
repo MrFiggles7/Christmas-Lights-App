@@ -8,13 +8,7 @@ const char* ssid     = "Metropolis";
 const char* password = "cryptkeeper4us";
 #define FIREBASE_HOST "christmas-lights-19083-default-rtdb.firebaseio.com/"
 #define FIREBASE_AUTH "RF26mOPXlLTwMqBLtKSKvthlwOK6fpz2oxb2yZHD" // secret (40 chars)
-#define USER_EMAIL "fingersmagoo+christmas@gmail.com"
-#define USER_PASSWORD "ou812ic"
-#define API_KEY "AIzaSyCtoGVfq7bo0kQT700uW7mV_RK4upg-A44"
-#define FIREBASE_PROJECT_ID "christmas-lights-19083"
-
-#define DELAYVAL 10000
-
+#define DELAYVAL 100
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, NEO_RGB + NEO_KHZ800);
 FirebaseData fbdo;
 FirebaseAuth auth;
@@ -25,13 +19,12 @@ void setup()
   Serial.begin(115200);
   Serial.println("Starting Sketch...");
   setupWiFi();
-  config.api_key = API_KEY;
+  config.signer.tokens.legacy_token = FIREBASE_AUTH;
   config.database_url = FIREBASE_HOST;
-  auth.user.email = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;  
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
   strip.begin();
+  strip.setBrightness(150);
 }
 
 void setupWiFi () {
@@ -55,5 +48,16 @@ void setupWiFi () {
 
 void loop()
 {
+  /*
+  strip.clear();
+  strip.setBrightness(150);
+  strip.setPixelColor(0, strip.Color(255, 255, 255));
+  strip.setPixelColor(1, strip.Color(255, 0, 0));
+  for(int i=0; i<PIXEL_COUNT; i++) { // For each pixel...
+    strip.setPixelColor(i, strip.Color(255, 255, 255));
+  }
+  strip.show();   // Send the updated pixel colors to the hardware.  
+  delay(1000);
+  */
   readFirebaseData();
 }

@@ -7,49 +7,58 @@ void readFirebaseData() {
   }
 }
 
-void GetDocument() {
-  String documentPath = "animations/" + String(currentDocument);
-  String mask = "";
-  int brightness = 0;
-  
+bool DocumentExists(String documentPath) {
+  documentPath = documentPath+ "/name";
   if (Firebase.RTDB.getJSON(&fbdo, documentPath.c_str())) {
-      String temp(fbdo.payload().c_str());
+      String temp(fbdo.payload().c_str());      
       if (temp == "null") {
         currentDocument = 0;
-        GetDocument();
-      } else {        
-        FirebaseJson payload;
-        FirebaseJsonData result;        
-        payload.setJsonData(temp);        
-        payload.get(result, "brightness");
-        if (result.success)
-        {
-          brightness = result.to<int>();
-        }    
-        payload.get(result, "frames");
-        FirebaseJsonArray frames;
-        result.get<FirebaseJsonArray>(frames);
-        frames.get(result, 0); // Only doing this because we are not animating yet.
-        String scene = result.to<String>();
-        setScene(brightness, scene);
-        currentDocument++;
+        return false;
+      } else {
+        return true;
       }
-      /*
-      for (size_t i = 0; i < frames.size(); i++)
-      {
-        frames.get(result, i);        
-        //Print its value
-        Serial.print("Array index: ");
-        Serial.print(i);
-        Serial.print(", type: ");
-        Serial.print(result.type);
-        Serial.print(", value: ");
-        Serial.println(result.to<String>());
+  }  
+}
+
+void GetDocument() {
+  String documentPath = "animations/" + String(currentDocument);
+  String scene;
+  if(DocumentExists(documentPath)) {
+    
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/0")) {
+        scene = scene + fbdo.payload().c_str();
+      }      
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/1")) {
+        scene = scene + fbdo.payload().c_str();
       }
-      */
-  }
-  else {
-    currentDocument = 0;
-    Serial.println(fbdo.errorReason());
+      
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/2")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+      
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/3")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+      
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/4")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/5")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+      
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/6")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+      if (Firebase.RTDB.getJSON(&fbdo, documentPath+ "/frames/7")) {
+        scene = scene + fbdo.payload().c_str();
+      }
+            
+      scene.replace("\"","");
+      setScene(scene);
+      currentDocument++;
+    
+  } else {
+    GetDocument();
   }
 }
